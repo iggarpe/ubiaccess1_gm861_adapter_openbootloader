@@ -203,11 +203,6 @@ void OPENBL_FLASH_SetReadOutProtectionLevel(uint32_t Level)
       flash_ob.PCROP1AEndAddr = 0x08000000U;
       /* Change PCROP1 registers */
       HAL_FLASHEx_OBProgram(&flash_ob);
-      flash_ob.PCROPConfig = FLASH_BANK_2;
-      flash_ob.PCROP2AStartAddr = 0x08047FFFU;
-      flash_ob.PCROP2AEndAddr = 0x08040000U;
-      /* Change PCROP2 registers */
-      HAL_FLASHEx_OBProgram(&flash_ob);
     }
   }
 }
@@ -274,10 +269,6 @@ ErrorStatus OPENBL_FLASH_MassErase(uint8_t *p_Data, uint32_t DataLength)
     else if (bank_option == FLASH_BANK1_ERASE)
     {
       erase_init_struct.Banks = FLASH_BANK_1;
-    }
-    else if (bank_option == FLASH_BANK2_ERASE)
-    {
-      erase_init_struct.Banks = FLASH_BANK_2;
     }
     else
     {
@@ -347,10 +338,6 @@ ErrorStatus OPENBL_FLASH_Erase(uint8_t *p_Data, uint32_t DataLength)
     if (erase_init_struct.Page <= 127)
     {
       erase_init_struct.Banks = FLASH_BANK_1;
-    }
-    else if (erase_init_struct.Page <= 255)
-    {
-      erase_init_struct.Banks = FLASH_BANK_2;
     }
     else
     {
@@ -474,32 +461,6 @@ static ErrorStatus OPENBL_FLASH_EnableWriteProtection(uint8_t *ListOfPages, uint
     HAL_FLASHEx_OBProgram(&flash_ob);
   }
 
-  /* Write protection of bank 2 area WRPB 1 area */
-  if (Length >= 6)
-  {
-    wrp_start_offset = *(ListOfPages + 4);
-    wrp_end_offset   = *(ListOfPages + 5);
-
-    flash_ob.WRPArea        = OB_WRPAREA_ZONE2_A;
-    flash_ob.WRPStartOffset = wrp_start_offset;
-    flash_ob.WRPEndOffset   = wrp_end_offset;
-
-    HAL_FLASHEx_OBProgram(&flash_ob);
-  }
-
-  /* Write protection of bank 2 area WRPB 2 area */
-  if (Length >= 8)
-  {
-    wrp_start_offset = *(ListOfPages + 6);
-    wrp_end_offset   = *(ListOfPages + 7);
-
-    flash_ob.WRPArea        = OB_WRPAREA_ZONE2_B;
-    flash_ob.WRPStartOffset = wrp_start_offset;
-    flash_ob.WRPEndOffset   = wrp_end_offset;
-
-    HAL_FLASHEx_OBProgram(&flash_ob);
-  }
-
   return status;
 }
 
@@ -530,20 +491,6 @@ static ErrorStatus OPENBL_FLASH_DisableWriteProtection(void)
 
   /* Disable write protection of bank 1 area WRPA 2 area */
   flash_ob.WRPArea        = OB_WRPAREA_ZONE_B;
-  flash_ob.WRPStartOffset = wrp_start_offset;
-  flash_ob.WRPEndOffset   = wrp_end_offset;
-
-  HAL_FLASHEx_OBProgram(&flash_ob);
-
-  /* Disable write protection of bank 2 area WRPB 1 area */
-  flash_ob.WRPArea        = OB_WRPAREA_ZONE2_A;
-  flash_ob.WRPStartOffset = wrp_start_offset;
-  flash_ob.WRPEndOffset   = wrp_end_offset;
-
-  HAL_FLASHEx_OBProgram(&flash_ob);
-
-  /* Disable write protection of bank 2 area WRPB 2 area */
-  flash_ob.WRPArea        = OB_WRPAREA_ZONE2_B;
   flash_ob.WRPStartOffset = wrp_start_offset;
   flash_ob.WRPEndOffset   = wrp_end_offset;
 

@@ -118,42 +118,6 @@ void OPENBL_OB_Write(uint32_t Address, uint8_t *Data, uint32_t DataLength)
     WRITE_REG(FLASH->PCROP1BER, (*(Data + 48) | (*(Data + 49) << 8)));
   }
 
-  /* Write PCROP2ASR */
-  if (DataLength >= 58)
-  {
-    WRITE_REG(FLASH->PCROP2ASR, (*(Data + 56) | (*(Data + 57) << 8)));
-  }
-
-  /* Write PCROP2AER */
-  if (DataLength >= 66)
-  {
-    WRITE_REG(FLASH->PCROP2AER, (*(Data + 64) | (*(Data + 65) << 8)));
-  }
-
-  /* Write WRP2AR */
-  if (DataLength >= 76)
-  {
-    WRITE_REG(FLASH->WRP2AR, (*(Data + 72) | (*(Data + 73) << 8) | (*(Data + 74) << 16) | (*(Data + 75) << 24)));
-  }
-
-  /* Write WRP2BR */
-  if (DataLength >= 84)
-  {
-    WRITE_REG(FLASH->WRP2BR, (*(Data + 80) | (*(Data + 81) << 8) | (*(Data + 82) << 16) | (*(Data + 83) << 24)));
-  }
-
-  /* Write PCROP2BSR */
-  if (DataLength >= 90)
-  {
-    WRITE_REG(FLASH->PCROP2BSR, (*(Data + 88) | (*(Data + 89) << 8)));
-  }
-
-  /* Write PCROP2BER */
-  if (DataLength >= 98)
-  {
-    WRITE_REG(FLASH->PCROP2BER, (*(Data + 96) | (*(Data + 97) << 8)));
-  }
-
   /* Write SECR */
   if (DataLength >= 116)
   {

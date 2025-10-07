@@ -243,6 +243,11 @@
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/OpenBootloader/Target/usart_interface.c</locationURI>
 		</link>
 		<link>
+			<name>Application/Openbootloader/Target/timeout_interface.c</name>
+			<type>1</type>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/OpenBootloader/Target/timeout_interface.c</locationURI>
+		</link>
+		<link>
 			<name>Middlewares/OpenBootloader/Core/openbl_core.c</name>
 			<type>1</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Middlewares/ST/OpenBootloader/Core/openbl_core.c</locationURI>

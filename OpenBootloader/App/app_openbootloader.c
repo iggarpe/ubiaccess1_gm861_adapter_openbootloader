@@ -28,6 +28,7 @@
 #include "systemmemory_interface.h"
 #include "openbl_usart_cmd.h"
 #include "openbl_core.h"
+#include "timeout_interface.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -78,6 +79,9 @@ void OpenBootloader_Init(void)
 
   /* Initialise interfaces */
   OPENBL_Init();
+
+  /* Initialise inactivity timeout */
+  OPENBL_TIMEOUT_Init();
 
   /* Initialise memories */
   OPENBL_MEM_RegisterMemory(&FLASH_Descriptor);

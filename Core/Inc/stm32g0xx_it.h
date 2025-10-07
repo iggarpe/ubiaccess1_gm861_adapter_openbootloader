@@ -28,16 +28,12 @@ extern "C" {
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 /* External variables --------------------------------------------------------*/
-extern PCD_HandleTypeDef hpcd;
-extern PCD_HandleTypeDef hpcd_USB_FS;
-
 /* Exported functions prototypes ---------------------------------------------*/
 void NMI_Handler(void);
 void HardFault_Handler(void);
 void SVC_Handler(void);
 void PendSV_Handler(void);
 void SysTick_Handler(void);
-void USB_UCPD1_2_IRQHandler(void);
 
 #ifdef __cplusplus
 }
