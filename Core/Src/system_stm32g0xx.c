@@ -165,6 +165,14 @@ const uint32_t APBPrescTable[8UL] =  {0UL, 0UL, 0UL, 0UL, 1UL, 2UL, 3UL, 4UL};
   * @param  None
   * @retval None
   */
+
+#define WATCHDOG_TIMEOUT 10
+#define BOOTFLAG_REG TAMP->BKP4R
+#define BOOTFLAG_BLDR (('B' << 0) | ('L' << 8) | ('D' << 16) | ('R' << 24))
+#define BOOTFLAG_MAIN (('M' << 0) | ('A' << 8) | ('I' << 16) | ('N' << 24))
+
+extern const uint8_t __main_start;
+
 void SystemInit(void)
 {
   /* Configure the Vector Table location add offset address ------------------*/
@@ -173,6 +181,58 @@ void SystemInit(void)
 #else
   SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH */
 #endif
+
+  /* Enable watchdog right away */
+  IWDG->KR = IWDG_KEY_ENABLE;
+  IWDG->KR = IWDG_KEY_WRITE_ACCESS_ENABLE;
+  IWDG->PR = IWDG_PRESCALER_256;
+  IWDG->RLR = (WATCHDOG_TIMEOUT * LSI_VALUE) / 256 - 1;
+  while (IWDG->SR & (IWDG_SR_PVU | IWDG_SR_RVU | IWDG_SR_WVU));
+  IWDG->KR = IWDG_KEY_RELOAD;
+
+#if 0
+  /* Read reset cause and reset flags */
+  uint32_t reset_cause = RCC->CSR;
+  RCC->CSR |= RCC_CSR_RMVF;
+
+  /* Example: store or branch based on reset_cause if needed */
+  /*
+    if (reset_cause & RCC_CSR_LPWRRSTF) { // Low-power reset }
+    if (reset_cause & RCC_CSR_WWDGRSTF) { // Window watchdog reset }
+    if (reset_cause & RCC_CSR_IWDGRSTF) { // Independent watchdog reset }
+    if (reset_cause & RCC_CSR_SFTRSTF)  { // Software reset }
+    if (reset_cause & RCC_CSR_PORRSTF)  { // POR/PDR reset }
+    if (reset_cause & RCC_CSR_PINRSTF)  { // NRST pin reset }
+    if (reset_cause & RCC_CSR_OBLRSTF)  { // Option byte loader reset }
+    if (reset_cause & RCC_CSR_FWRSTF)   { // Firewall reset }
+  */
+#endif
+
+  /* Enable clocks to power and RTC */
+  RCC->APBENR1 |= RCC_APBENR1_PWREN | RCC_APBENR1_RTCAPBEN;
+
+  /* If reset was from bootloader jump to main application */
+  if (BOOTFLAG_REG == BOOTFLAG_BLDR) {
+
+    /* Disable write protection, set new state and reenable it */
+    PWR->CR1 |= PWR_CR1_DBP;
+    BOOTFLAG_REG= BOOTFLAG_MAIN;
+    PWR->CR1 &= ~PWR_CR1_DBP;
+
+    /* Application base: FLASH + 16KB */
+    const uint32_t app = (uint32_t)&__main_start;
+    const uint32_t sp  = *(uint32_t *)(app + 0U);
+    const uint32_t pc  = *(uint32_t *)(app + 4U);
+
+    __disable_irq();
+    __set_MSP(sp);
+    ((void (*)(void))pc)();
+  }
+
+  /* Disable write protection, set new state and reenable it */
+  PWR->CR1 |= PWR_CR1_DBP;
+  BOOTFLAG_REG = BOOTFLAG_BLDR;
+  PWR->CR1 &= ~PWR_CR1_DBP;
 }
 
 /**
