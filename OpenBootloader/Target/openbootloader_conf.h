@@ -32,8 +32,11 @@
 #define DEVICE_ID_LSB                     0x66              /* LSB byte of device ID */
 
 /* -------------------------- Definitions for Memories ---------------------- */
-#define FLASH_START_ADDRESS               (FLASH_BASE + (16 * 1024))
-#define FLASH_END_ADDRESS                 (FLASH_BASE + (64 * 1024))
+extern const uint8_t __main_start;
+extern const uint8_t __main_end;
+
+#define FLASH_START_ADDRESS               ((uint32_t)&__main_start)
+#define FLASH_END_ADDRESS                 ((uint32_t)&__main_end)
 
 #define OB_START_ADDRESS                  0x1FFF7800U       /* Option bytes registers address */
 #define OB_END_ADDRESS                    0x1FFF787FU       /* Option bytes end address (128 bytes) */

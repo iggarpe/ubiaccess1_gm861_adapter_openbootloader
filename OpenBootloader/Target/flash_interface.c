@@ -39,9 +39,9 @@ static ErrorStatus OPENBL_FLASH_DisableWriteProtection(void);
 /* Exported variables --------------------------------------------------------*/
 OPENBL_MemoryTypeDef FLASH_Descriptor =
 {
-  FLASH_START_ADDRESS,
-  FLASH_END_ADDRESS,
-  FLASH_END_ADDRESS - FLASH_START_ADDRESS + 1,
+  0,    /* StartAddress, EndAddress and Size need to be set at runtime since */
+  0,    /* they use linker variables which are not constant expressions */
+  0,
   FLASH_AREA,
   OPENBL_FLASH_Read,
   OPENBL_FLASH_Write,

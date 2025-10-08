@@ -20,8 +20,8 @@
 #include "platform.h"
 #include "openbl_core.h"
 #include "openbl_usart_cmd.h"
+#include "common_interface.h"
 #include "usart_interface.h"
-#include "iwdg_interface.h"
 #include "interfaces_conf.h"
 
 /* Private typedef -----------------------------------------------------------*/
@@ -171,8 +171,9 @@ uint8_t OPENBL_USART_ReadByte(void)
 {
   while (!LL_USART_IsActiveFlag_RXNE_RXFNE(USARTx))
   {
-    OPENBL_IWDG_Refresh();
   }
+
+  Common_WatchdogRefresh();
 
   return LL_USART_ReceiveData8(USARTx);
 }

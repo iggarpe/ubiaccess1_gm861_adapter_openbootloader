@@ -27,6 +27,8 @@ typedef void (Send_BusyByte_Func)(void);
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
+#define Common_WatchdogRefresh() do { IWDG->KR = IWDG_KEY_RELOAD; } while (0)
+
 /* Exported functions ------------------------------------------------------- */
 void Common_SetMsp(uint32_t TopOfMainStack);
 void Common_EnableIrq(void);
