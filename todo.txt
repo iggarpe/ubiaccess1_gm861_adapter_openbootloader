@@ -1,0 +1,2 @@
+- Deinitialize GPIO and peripherals before executing GO command (0x21).
+

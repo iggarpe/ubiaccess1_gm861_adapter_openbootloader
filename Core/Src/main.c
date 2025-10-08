@@ -23,7 +23,6 @@
 #include "main.h"
 #include "app_openbootloader.h"
 
-#include <stdio.h>
 extern void initialise_monitor_handles(void);
 
 /* Private typedef -----------------------------------------------------------*/
@@ -39,25 +38,16 @@ void SystemClock_Config(void);
   */
 int main(void)
 {
+#ifdef DEBUG
   initialise_monitor_handles();
+#endif
 
-  /* STM32G0xx HAL library initialization:
-       - Configure the Flash prefetch, Flash preread and Buffer caches
-       - Systick timer is configured by default as source of time base, but user
-             can eventually implement his proper time base source (a general purpose
-             timer for example or other time source), keeping in mind that Time base
-             duration should be kept 1ms since PPP_TIMEOUT_VALUEs are defined and
-             handled in milliseconds basis.
-       - Low Level Initialization
-     */
   HAL_Init();
 
-  /* Configure the system clock */
   SystemClock_Config();
 
   OpenBootloader_Init();
 
-  /* Infinite loop */
   while (1)
   {
     OpenBootloader_ProtocolDetection();
