@@ -27,6 +27,10 @@ and how use it.
 Porting note:
 - This project originated from the STM32CubeG0 OpenBootloader example for STM32G0C1.
 - It has been ported to target STM32G031G8 (STM32G031xx).
+- The IWDG is unconditionally enabled at the very beginning in SystemInit() and
+  only refreshed when a byte is received, which means that it acts as an inactivity
+  timeout and also that it will be enabled when the main application is jumped to.
+  MAKE SURE TO REFRESH THE WATCHDOG IN THE MAIN APPLICATION.
 
 At the beginning of the main program the HAL_Init() function is called to reset 
 all the peripherals, initialize the Flash interface and the systick.

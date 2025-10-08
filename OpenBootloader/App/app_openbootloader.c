@@ -22,20 +22,17 @@
 #include "usart_interface.h"
 #include "flash_interface.h"
 #include "optionbytes_interface.h"
-#include "iwdg_interface.h"
 #include "otp_interface.h"
 #include "engibytes_interface.h"
 #include "systemmemory_interface.h"
 #include "openbl_usart_cmd.h"
 #include "openbl_core.h"
-#include "timeout_interface.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 static OPENBL_HandleTypeDef USART_Handle;
-static OPENBL_HandleTypeDef IWDG_Handle;
 
 static OPENBL_OpsTypeDef USART_Ops =
 {
@@ -44,15 +41,6 @@ static OPENBL_OpsTypeDef USART_Ops =
   OPENBL_USART_ProtocolDetection,
   OPENBL_USART_GetCommandOpcode,
   OPENBL_USART_SendByte
-};
-
-static OPENBL_OpsTypeDef IWDG_Ops =
-{
-  OPENBL_IWDG_Configuration,
-  NULL,
-  NULL,
-  NULL,
-  NULL
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -71,19 +59,14 @@ void OpenBootloader_Init(void)
 
   OPENBL_RegisterInterface(&USART_Handle);
 
-  /* Register IWDG interfaces */
-  IWDG_Handle.p_Ops = &IWDG_Ops;
-  IWDG_Handle.p_Cmd = NULL;
-
-  OPENBL_RegisterInterface(&IWDG_Handle);
-
   /* Initialise interfaces */
   OPENBL_Init();
 
-  /* Initialise inactivity timeout */
-  OPENBL_TIMEOUT_Init();
-
   /* Initialise memories */
+  FLASH_Descriptor.StartAddress = FLASH_START_ADDRESS;
+  FLASH_Descriptor.EndAddress = FLASH_END_ADDRESS;
+  FLASH_Descriptor.Size = FLASH_Descriptor.EndAddress - FLASH_Descriptor.StartAddress;
+
   OPENBL_MEM_RegisterMemory(&FLASH_Descriptor);
   OPENBL_MEM_RegisterMemory(&OB_Descriptor);
   OPENBL_MEM_RegisterMemory(&OTP_Descriptor);

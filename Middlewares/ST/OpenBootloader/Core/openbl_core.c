@@ -20,7 +20,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "openbl_core.h"
 #include <stdbool.h>
-#include "timeout_interface.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -129,9 +128,6 @@ void OPENBL_CommandProcess(void)
   if (p_Interface->p_Ops->GetCommandOpcode != NULL)
   {
     command_opcode = p_Interface->p_Ops->GetCommandOpcode();
-
-    /* Restart inactivity timeout on each valid opcode fetch */
-    OPENBL_TIMEOUT_Restart();
 
     switch (command_opcode)
     {
