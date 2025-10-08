@@ -171,7 +171,7 @@ const uint32_t APBPrescTable[8UL] =  {0UL, 0UL, 0UL, 0UL, 1UL, 2UL, 3UL, 4UL};
 #define BOOTFLAG_BLDR (('B' << 0) | ('L' << 8) | ('D' << 16) | ('R' << 24))
 #define BOOTFLAG_MAIN (('M' << 0) | ('A' << 8) | ('I' << 16) | ('N' << 24))
 
-extern const uint8_t __main_start;
+extern const uint32_t __main_start[];
 
 void SystemInit(void)
 {
@@ -220,9 +220,8 @@ void SystemInit(void)
     PWR->CR1 &= ~PWR_CR1_DBP;
 
     /* Application base: FLASH + 16KB */
-    const uint32_t app = (uint32_t)&__main_start;
-    const uint32_t sp  = *(uint32_t *)(app + 0U);
-    const uint32_t pc  = *(uint32_t *)(app + 4U);
+    const uint32_t sp  = __main_start[0];
+    const uint32_t pc  = __main_start[1];
 
     __disable_irq();
     __set_MSP(sp);

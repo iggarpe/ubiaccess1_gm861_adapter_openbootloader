@@ -23,6 +23,9 @@
 #include "main.h"
 #include "app_openbootloader.h"
 
+#include <stdio.h>
+extern void initialise_monitor_handles(void);
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -36,6 +39,8 @@ void SystemClock_Config(void);
   */
 int main(void)
 {
+  initialise_monitor_handles();
+
   /* STM32G0xx HAL library initialization:
        - Configure the Flash prefetch, Flash preread and Buffer caches
        - Systick timer is configured by default as source of time base, but user
