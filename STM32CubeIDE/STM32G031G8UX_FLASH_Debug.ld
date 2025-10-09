@@ -50,7 +50,7 @@ MEMORY
 }
 
 __main_start = ORIGIN(MAIN);
-__main_end   = ORIGIN(MAIN) + LENGTH(MAIN); 
+__main_end   = ORIGIN(MAIN) + LENGTH(MAIN);
 
 /* Sections */
 SECTIONS
