@@ -171,6 +171,11 @@ uint8_t OPENBL_USART_ReadByte(void)
 {
   while (!LL_USART_IsActiveFlag_RXNE_RXFNE(USARTx))
   {
+    /* Clear error flags if any to keep RX running after framing glitches */
+    if (LL_USART_IsActiveFlag_FE(USARTx))  LL_USART_ClearFlag_FE(USARTx);
+    if (LL_USART_IsActiveFlag_NE(USARTx))  LL_USART_ClearFlag_NE(USARTx);
+    if (LL_USART_IsActiveFlag_ORE(USARTx)) LL_USART_ClearFlag_ORE(USARTx);
+    if (LL_USART_IsActiveFlag_PE(USARTx))  LL_USART_ClearFlag_PE(USARTx);
   }
 
   Common_WatchdogRefresh();
