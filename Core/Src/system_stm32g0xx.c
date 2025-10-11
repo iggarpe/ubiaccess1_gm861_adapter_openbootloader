@@ -171,15 +171,16 @@ const uint32_t APBPrescTable[8UL] =  {0UL, 0UL, 0UL, 0UL, 1UL, 2UL, 3UL, 4UL};
 #define BOOTFLAG_BLDR (('B' << 0) | ('O' << 8) | ('O' << 16) | ('T' << 24))
 #define BOOTFLAG_MAIN (('M' << 0) | ('A' << 8) | ('I' << 16) | ('N' << 24))
 
+extern const uint32_t g_pfnVectors[];
 extern const uint32_t __main_start[];
 
 void SystemInit(void)
 {
-  /* Configure the Vector Table location add offset address ------------------*/
+  /* Configure the Vector Table location to the actual .isr_vector address ----*/
 #ifdef VECT_TAB_SRAM
   SCB->VTOR = SRAM_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal SRAM */
 #else
-  SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH */
+  SCB->VTOR = (uint32_t)&g_pfnVectors;     /* Vector Table set to linker-placed address in FLASH */
 #endif
 
   /* Enable watchdog right away */
@@ -219,11 +220,10 @@ void SystemInit(void)
     BOOTFLAG_REG= BOOTFLAG_MAIN;
     PWR->CR1 &= ~PWR_CR1_DBP;
 
-    /* Application base: FLASH + 16KB */
+    /* Jump to main application */
     const uint32_t sp  = __main_start[0];
     const uint32_t pc  = __main_start[1];
 
-    __disable_irq();
     __set_MSP(sp);
     ((void (*)(void))pc)();
   }
