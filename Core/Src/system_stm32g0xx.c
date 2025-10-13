@@ -174,6 +174,8 @@ const uint32_t APBPrescTable[8UL] =  {0UL, 0UL, 0UL, 0UL, 1UL, 2UL, 3UL, 4UL};
 extern const uint32_t g_pfnVectors[];
 extern const uint32_t __main_start[];
 
+static uint32_t reset_cause;
+
 void SystemInit(void)
 {
   /* Configure the Vector Table location to the actual .isr_vector address ----*/
@@ -191,29 +193,17 @@ void SystemInit(void)
   while (IWDG->SR & (IWDG_SR_PVU | IWDG_SR_RVU | IWDG_SR_WVU));
   IWDG->KR = IWDG_KEY_RELOAD;
 
-#if 0
-  /* Read reset cause and reset flags */
-  uint32_t reset_cause = RCC->CSR;
+  /* Save reset cause and clear flags */
+  reset_cause = RCC->CSR;
   RCC->CSR |= RCC_CSR_RMVF;
-
-  /* Example: store or branch based on reset_cause if needed */
-  /*
-    if (reset_cause & RCC_CSR_LPWRRSTF) { // Low-power reset }
-    if (reset_cause & RCC_CSR_WWDGRSTF) { // Window watchdog reset }
-    if (reset_cause & RCC_CSR_IWDGRSTF) { // Independent watchdog reset }
-    if (reset_cause & RCC_CSR_SFTRSTF)  { // Software reset }
-    if (reset_cause & RCC_CSR_PORRSTF)  { // POR/PDR reset }
-    if (reset_cause & RCC_CSR_PINRSTF)  { // NRST pin reset }
-    if (reset_cause & RCC_CSR_OBLRSTF)  { // Option byte loader reset }
-    if (reset_cause & RCC_CSR_FWRSTF)   { // Firewall reset }
-  */
-#endif
 
   /* Enable clocks to power and RTC */
   RCC->APBENR1 |= RCC_APBENR1_PWREN | RCC_APBENR1_RTCAPBEN;
 
-  /* If reset was from bootloader jump to main application */
-  if (BOOTFLAG_REG == BOOTFLAG_BLDR) {
+  /* If this is not a power-on reset and last running was the bootloader
+   * then jump to the main application. */
+  if (!(reset_cause & RCC_CSR_PWRRSTF) &&
+      (BOOTFLAG_REG == BOOTFLAG_BLDR)) {
 
     /* Disable write protection, set new state and reenable it */
     PWR->CR1 |= PWR_CR1_DBP;
